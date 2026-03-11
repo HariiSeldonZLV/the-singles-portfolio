@@ -71,7 +71,8 @@
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Doto:wght@900&display=swap');
+/* Importar fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Doto:wght@900&family=Montserrat:wght@400;500;700&display=swap');
 
 /* Fondo general */
 .contact-background {
@@ -93,14 +94,14 @@
 
 /* Título */
 .contact-title {
-  font-family:'Doto', monospace;
-  font-weight:900;
-  font-size:2.5rem;
-  color:#ff0000;
+  font-family: 'Doto', monospace;
+  font-weight: 900;
+  font-size: 2.5rem;
+  color: #ff0000;
   text-shadow:
     0 0 10px #ff0000,
     0 0 20px rgba(255,0,0,.8);
-  text-align:center;
+  text-align: center;
 }
 
 /* Card individual de contacto */
@@ -121,7 +122,11 @@
   transition: transform .3s ease, box-shadow .3s ease;
   position: relative;
   overflow: hidden;
-  font-family:'Doto', monospace;
+
+  /* NUEVA FUENTE para las cards */
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 /* Hover glow animado */
@@ -176,7 +181,7 @@
   }
 }
 
-/* Texto */
+/* Texto dentro de las cards */
 .contact-card span {
   color:white;
 }

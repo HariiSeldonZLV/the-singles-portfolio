@@ -1,10 +1,25 @@
 <template>
-  <div class="background">
+  <div class="home-background">
+
+    <!-- Flecha al Home (solo si no estamos en Home) -->
+    <v-btn
+      icon
+      class="home-back-btn"
+      @click="goHome"
+      v-if="!isHomePage"
+    >
+      <v-icon>mdi-arrow-left</v-icon>
+    </v-btn>
 
     <!-- Luces estáticas detrás -->
     <div class="lights-container">
       <div class="light-green"></div>
-      <div class="light-white" v-for="i in 10" :key="i" :style="{ left: `${5 + (i-1)*9}%`, top: '55%' }"></div>
+      <div
+        class="light-white"
+        v-for="i in 10"
+        :key="i"
+        :style="{ left: `${5 + (i-1)*9}%`, top: '55%' }"
+      ></div>
     </div>
 
     <!-- Cards -->
@@ -37,7 +52,7 @@
       </v-col>
     </v-row>
 
-    <!-- Leyenda en la parte inferior -->
+    <!-- Leyenda inmersiva -->
     <div class="immersive-note-container">
       <p class="immersive-note fade-up">
         Para una experiencia inmersiva en mi portafolio recomiendo hacer click en la nota musical,
@@ -48,77 +63,60 @@
   </div>
 </template>
 
-<script setup>
-import { useRouter } from "vue-router"
+<script setup lang="ts">
+import { useRouter, useRoute } from "vue-router";
+import { computed } from "vue";
 
-const router = useRouter()
+const router = useRouter();
+const route = useRoute();
+
+// Reactivo: si estamos en Home no mostrar la flecha
+const isHomePage = computed(() => {
+  // Ajustado para GitHub Pages
+  return route.path === "/the-singles-portfolio/" || route.path === "/";
+});
 
 const letters = [
   { char: "d", word: "HISTORIA", route: "/historia" },
   { char: "s", word: "SKILLS", route: "/skills" },
   { char: "1", word: "PROYECTOS", route: "/proyectos" },
   { char: "9", word: "EXPERIENCIA", route: "/experiencia" },
-  { char: "8", word: "CERTIFICACIONES", route: "/certificaciones" },
+  { char: "8", word: "ESTUDIOS", route: "/certificaciones" }, // cambié certificaciones por estudios, es mas corto y cabe en la card
   { char: "0", word: "CONTACTO", route: "/contacto" }
-]
+];
 
-function goTo(route){
-  router.push(route)
+function goTo(routePath: string) {
+  router.push(routePath);
+}
+
+function goHome() {
+  router.push("/"); // esto apunta al home correctamente
 }
 </script>
 
-<style>
+<style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Doto:wght@900&display=swap');
 
-/* BACKGROUND */
-.background{
-  position:relative;
-  min-height:100vh;
-  width:100%;
-  background:
-    linear-gradient(
-      to bottom,
-      #138ea4 0%,
-      #138ea4 35%,
-      rgba(252,176,69,0.35) 45%,
-      #000000 65%,
-      #000000 100%
-    );
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-  align-items:center;
-  overflow:hidden;
-  padding-top:40px;
+/* Botón flecha Home */
+.home-back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  color: #ff4d4d;
 }
 
-/* scanlines */
-.background::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background-image:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(0,0,0,0) 0px,
-      rgba(0,0,0,0.08) 1px
-    );
-  opacity:.25;
-  pointer-events:none;
-}
-
-/* glow */
-.background::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(
-      circle at center,
-      rgba(255,255,255,0.03) 0%,
-      transparent 80%
-    );
-  pointer-events:none;
+/* Contenedor principal ajustado */
+.home-background {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 40px;
+  position: relative;
+  overflow: hidden;
+  min-height: calc(100vh - 50px);
+  justify-content: center;
 }
 
 /* LUCES ESTÁTICAS */
@@ -138,16 +136,17 @@ function goTo(route){
   opacity:0.8;
 }
 
-.light-green{
-  position:absolute;
-  width:50px;
-  height:50px;
-  background:#68e00c;
-  border-radius:50%;
-  filter: blur(20px);
-  opacity:0.7;
-  left:5%;
-  top:50%;
+.light-green {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  left: 5%;
+  top: 50%;
+  background: radial-gradient(circle at center bottom, #68e00c 0%, transparent 80%);
+  border-radius: 50%;
+  opacity: 0.7;
+  filter: blur(60px);
+  box-shadow: 0 -200px 300px 100px #68e00c;
 }
 
 /* CARD */
@@ -204,19 +203,13 @@ function goTo(route){
     0 0 20px #ff0000,
     0 0 40px rgba(255,0,0,.8),
     0 0 80px rgba(255,0,0,.6);
-
   animation:
     ledPulse 2.2s ease-in-out infinite,
     ledFlicker 6s linear infinite;
 }
 
-.gate-left{
-  clip-path: inset(0 50% 0 0);
-}
-
-.gate-right{
-  clip-path: inset(0 0 0 50%);
-}
+.gate-left{ clip-path: inset(0 50% 0 0); }
+.gate-right{ clip-path: inset(0 0 0 50%); }
 
 /* hover word */
 .hover-word{
@@ -239,68 +232,34 @@ function goTo(route){
 }
 
 /* hover animation */
-.hover-card:hover .gate-left{
-  transform:translateX(-60px);
-}
-
-.hover-card:hover .gate-right{
-  transform:translateX(60px);
-}
-
-.hover-card:hover .gate{
-  opacity:.25;
-}
-
-.hover-card:hover .hover-word{
-  opacity:1;
-  transform:scale(1);
-}
+.hover-card:hover .gate-left{ transform:translateX(-60px); }
+.hover-card:hover .gate-right{ transform:translateX(60px); }
+.hover-card:hover .gate{ opacity:.25; }
+.hover-card:hover .hover-word{ opacity:1; transform:scale(1); }
 
 /* LED pulse */
 @keyframes ledPulse{
-  0%{
-    text-shadow:
-      0 0 10px #ff0000,
-      0 0 20px #ff0000,
-      0 0 40px rgba(255,0,0,.8),
-      0 0 80px rgba(255,0,0,.6);
-  }
-  50%{
-    text-shadow:
-      0 0 20px #ff0000,
-      0 0 40px #ff0000,
-      0 0 80px rgba(255,0,0,.9),
-      0 0 120px rgba(255,0,0,.7);
-  }
-  100%{
-    text-shadow:
-      0 0 10px #ff0000,
-      0 0 20px #ff0000,
-      0 0 40px rgba(255,0,0,.8),
-      0 0 80px rgba(255,0,0,.6);
-  }
+  0%{ text-shadow:0 0 10px #ff0000,0 0 20px #ff0000,0 0 40px rgba(255,0,0,.8),0 0 80px rgba(255,0,0,.6);}
+  50%{ text-shadow:0 0 20px #ff0000,0 0 40px #ff0000,0 0 80px rgba(255,0,0,.9),0 0 120px rgba(255,0,0,.7);}
+  100%{ text-shadow:0 0 10px #ff0000,0 0 20px #ff0000,0 0 40px rgba(255,0,0,.8),0 0 80px rgba(255,0,0,.6);}
 }
 
 /* flicker */
 @keyframes ledFlicker{
-  0%,19%,21%,23%,52%,54%,100%{
-    opacity:1;
-  }
-  20%,22%,53%{
-    opacity:.75;
-  }
+  0%,19%,21%,23%,52%,54%,100%{ opacity:1; }
+  20%,22%,53%{ opacity:.75; }
 }
 
 /* Leyenda inmersiva */
-.immersive-note-container{
-  margin-top:auto;
-  margin-bottom:40px;
-  text-align:center;
-  width:100%;
+.immersive-note-container {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  text-align: center;
+  width: 100%;
 }
 
 .immersive-note{
-  font-size:16px;
+  font-size:20px;
   color:white;
   opacity:0;
   line-height:1.6;

@@ -1,28 +1,58 @@
 <template>
   <v-app>
-    <!-- Contenido principal -->
-    <v-main class="app-background pa-6">
+    <v-main class="app-background">
+      <!-- Aquí se cargan todas las rutas -->
       <router-view />
     </v-main>
 
-    <!-- Footer minimalista -->
-    <Footer />
+    <!-- Flecha volver al Home solo si no estamos en Home -->
+    <div v-if="!isHomePage" class="back-home-arrow" @click="goHome"></div>
 
-    <!-- Mini player flotante -->
+    <!-- Nota musical siempre presente -->
     <MiniSoundCloudPlayer />
 
-    <!-- Flecha volver al home -->
-    <div class="back-home-arrow" @click="$router.push('/')"></div>
+    <!-- Footer siempre presente -->
+    <Footer />
   </v-app>
 </template>
 
 <script setup lang="ts">
+import { useRouter, useRoute } from "vue-router";
+import { computed } from "vue";
+
 import Footer from "./components/Footer.vue";
 import MiniSoundCloudPlayer from "./components/MiniSoundCloudPlayer.vue";
+
+const router = useRouter();
+const route = useRoute();
+
+// Detecta si estamos en Home
+const isHomePage = computed(() => route.path === "/" || route.path === "/the-singles-portfolio/");
+
+// Función para volver al Home
+function goHome() {
+  router.push("/");
+}
 </script>
 
 <style>
-/* Flecha volver al home - esquina inferior izquierda */
+/* Contenido principal */
+.app-background {
+  padding-top: 0;
+  overflow: auto;
+  background:
+    linear-gradient(
+      to bottom,
+      #138ea4 0%,
+      #138ea4 35%,
+      rgba(252,176,69,0.35) 45%,
+      #000000 65%,
+      #000000 100%
+    );
+  position: relative;
+}
+
+/* Flecha volver al home */
 .back-home-arrow {
   position: fixed;
   bottom: 20px;
@@ -35,56 +65,20 @@ import MiniSoundCloudPlayer from "./components/MiniSoundCloudPlayer.vue";
   cursor: pointer;
   animation: bounce 1.5s infinite;
   z-index: 1000;
+  background: rgba(0,0,0,0.3);
+  border-radius: 5px;
+  padding: 5px;
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(-45deg); }
-  40% { transform: translateY(-8px) rotate(-45deg); }
-  60% { transform: translateY(-4px) rotate(-45deg); }
+  0%,20%,50%,80%,100% { transform: translateY(0) rotate(-45deg); }
+  40% { transform: translateY(-6px) rotate(-45deg); }
+  60% { transform: translateY(-3px) rotate(-45deg); }
 }
 
-/* Fondo general de la app */
-.app-background {
-  min-height: 100vh;
-  width: 100%;
-  background:
-    linear-gradient(
-      to bottom,
-      #138ea4 0%,
-      #138ea4 35%,
-      rgba(252,176,69,0.35) 45%,
-      #000000 65%,
-      #000000 100%
-    );
-  padding-top: 60px;
-  overflow: auto;
-  display: block;
-}
-
-.app-background::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(0,0,0,0) 0px,
-      rgba(0,0,0,0.08) 1px
-    );
-  opacity: .25;
-  pointer-events: none;
-}
-
-.app-background::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      circle at center,
-      rgba(255,255,255,0.03) 0%,
-      transparent 80%
-    );
-  pointer-events: none;
+.back-home-arrow:hover {
+  border-color: #ff0000;
+  background: rgba(255,0,0,0.2);
+  transform: translateY(-2px) rotate(-45deg);
 }
 </style>
